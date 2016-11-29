@@ -12,7 +12,7 @@ data = flipud(data);
 data = medfilt2(data);
 
 % plot raw data
-% plot_show(data, 410);
+plot_show(data, 410);
 
 % compute endpoint lambda for CCD array
 theta_d = asin(lmd_center*1e-6/d - sin(theta_i));
@@ -22,14 +22,14 @@ lmd_1 = lmd_center + (n_ccd*rho)/2;
 
 shape = size(data);
 
-
+% subtract dc
 ave = zeros(shape(1), 1);
 for row = 1:shape(1)
-    ave(row) = mean(data(row, :), 2);
+    ave(row) = mean(data(row, :));
 end
-
 for col = 1:shape(2)
     i = data(:, col);
+%     ave = average_filter(i, 11);
     i = i - ave;
     data(:, col) = i;
 end
@@ -54,8 +54,8 @@ for col = 1:shape(2)
     i = i(shape(1)+1:end);
     
     i(abs(i)>10)=0;
-    data(:, col) = i;
+    data(:, col) = log10(i);
     disp(['A-line: ', num2str(col)])
     
 end
-plot_show(data, 410);
+plot_show(data, 410, [-2.5, 0.5]);
